@@ -6,7 +6,7 @@ public static class UsuarioValidator
 {
     public static bool ValidarEmail(string email)
     {
-        var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+        var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$");
         return regex.IsMatch(email);
     }
 

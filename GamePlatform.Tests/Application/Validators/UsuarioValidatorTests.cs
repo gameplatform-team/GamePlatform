@@ -7,6 +7,7 @@ public class UsuarioValidatorTests
 {
     [Theory]
     [InlineData("teste@dominio.com", true)]
+    [InlineData("teste@dominio.com.br", true)]
     [InlineData("teste@dominio", false)]
     [InlineData("testedominio.com", false)]
     [InlineData("teste@dominio..com", false)]
