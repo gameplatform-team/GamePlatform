@@ -34,4 +34,21 @@ public class JogoController : ControllerBase
         
         return !resultado.Sucesso ? BadRequest(resultado) : StatusCode(201, resultado);
     }
+    
+    /// <summary>
+    /// Obtém um jogo pelo ID
+    /// </summary>
+    /// <param name="id">ID do jogo</param>
+    /// <response code="200">Jogo encontrado com sucesso</response>
+    /// <response code="404">Jogo não encontrado</response>
+    [ProducesResponseType(typeof(JogoResponseDto), 200)]
+    [ProducesResponseType(typeof(BaseResponseDto), 404)]
+    [HttpGet("{id:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    {
+        var resultado = await _jogoService.ObterPorIdAsync(id);
+        
+        return !resultado.Sucesso ? NotFound(resultado) : Ok(resultado);
+    }
 }

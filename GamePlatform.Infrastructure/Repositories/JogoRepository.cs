@@ -24,4 +24,9 @@ public class JogoRepository : IJogoRepository
         await _context.Jogos.AddAsync(jogo);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Jogo?> ObterPorIdAsync(Guid id)
+    {
+        return await _context.Jogos.FindAsync(id);
+    }
 }

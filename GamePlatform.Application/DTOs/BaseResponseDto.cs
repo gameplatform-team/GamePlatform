@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace GamePlatform.Application.DTOs;
 
 public class BaseResponseDto
@@ -10,6 +12,9 @@ public class BaseResponseDto
         Mensagem = mensagem;
     }
     
+    [JsonPropertyOrder(-2)]
     public bool Sucesso { get; set; }
+    
+    [JsonPropertyOrder(-1)]
     public string Mensagem { get; set; }
 }

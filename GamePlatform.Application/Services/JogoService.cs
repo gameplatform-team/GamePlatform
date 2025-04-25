@@ -25,4 +25,14 @@ public class JogoService : IJogoService
         
         return new BaseResponseDto(true, "Jogo cadastrado com sucesso");
     }
+
+    public async Task<JogoResponseDto> ObterPorIdAsync(Guid id)
+    {
+        var jogo = await _jogoRepository.ObterPorIdAsync(id);
+        
+        if (jogo == null)
+            return new JogoResponseDto(false, "Jogo não encontrado");
+        
+        return new JogoResponseDto(true, "Jogo encontrado", jogo);
+    }
 }

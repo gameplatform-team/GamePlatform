@@ -6,4 +6,5 @@ public interface IJogoRepository
 {
     public Task<bool> ExisteTituloAsync(string titulo);
     public Task AdicionarAsync(Jogo jogo);
+    public Task<Jogo?> ObterPorIdAsync(Guid id);
 }
