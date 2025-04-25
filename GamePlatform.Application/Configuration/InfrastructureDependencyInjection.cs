@@ -15,5 +15,6 @@ public static class InfrastructureDependencyInjection
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddScoped<IJogoRepository, JogoRepository>();
     }
 }
