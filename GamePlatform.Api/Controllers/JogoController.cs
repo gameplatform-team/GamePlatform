@@ -1,13 +1,14 @@
 using GamePlatform.Application.DTOs;
 using GamePlatform.Application.DTOs.Jogo;
 using GamePlatform.Application.Interfaces.Serivces;
+using GamePlatform.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GamePlatform.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/jogos")]
 [ProducesResponseType(500)]
 public class JogoController : ControllerBase
 {
@@ -33,6 +34,22 @@ public class JogoController : ControllerBase
         var resultado = await _jogoService.CadastrarAsync(jogo);
         
         return !resultado.Sucesso ? BadRequest(resultado) : StatusCode(201, resultado);
+    }
+    
+    /// <summary>
+    /// Obtém todos os jogos cadastrados na plataforma
+    /// </summary>
+    /// <response code="200">Lista de jogos cadastrados</response>
+    /// <response code="204">Nenhum jogo encontrado</response>
+    [ProducesResponseType(typeof(IEnumerable<Jogo>), 200)]
+    [ProducesResponseType(typeof(BaseResponseDto), 404)]
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetAllAsync()
+    {
+        var resultado = await _jogoService.ObterTodosAsync();
+        
+        return !resultado.Any() ? NoContent() : Ok(resultado);
     }
     
     /// <summary>

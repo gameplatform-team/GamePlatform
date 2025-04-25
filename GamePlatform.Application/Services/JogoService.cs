@@ -35,4 +35,9 @@ public class JogoService : IJogoService
         
         return new JogoResponseDto(true, "Jogo encontrado", jogo);
     }
+
+    public async Task<IEnumerable<Jogo>> ObterTodosAsync()
+    {
+        return await _jogoRepository.ObterTodosAsync();
+    }
 }

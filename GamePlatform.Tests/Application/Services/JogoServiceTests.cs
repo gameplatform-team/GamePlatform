@@ -88,4 +88,39 @@ public class JogoServiceTests
         Assert.False(resultado.Sucesso);
         Assert.Equal("Jogo não encontrado", resultado.Mensagem);
     }
+    
+    [Fact]
+    public async Task ObterTodosAsync_DeveRetornarLista_QuandoExistemJogos()
+    {
+        // Arrange
+        var jogos = new List<Jogo>
+        {
+            new("Jogo 1", 99.99m),
+            new("Jogo 2", 149.99m)
+        };
+        
+        _jogoRepoMock.Setup(x => x.ObterTodosAsync()).ReturnsAsync(jogos);
+        
+        // Act
+        var resultado = await _jogoService.ObterTodosAsync();
+        
+        // Assert
+        _jogoRepoMock.Verify(x => x.ObterTodosAsync(), Times.Once);
+        Assert.Equal(2, resultado.Count());
+        Assert.Equivalent(jogos, resultado, true);
+    }
+    
+    [Fact]
+    public async Task ObterTodosAsync_DeveRetornarListaVazia_QuandoNaoExistemJogos()
+    {
+        // Arrange
+        _jogoRepoMock.Setup(x => x.ObterTodosAsync()).ReturnsAsync(new List<Jogo>());
+        
+        // Act
+        var resultado = await _jogoService.ObterTodosAsync();
+        
+        // Assert
+        _jogoRepoMock.Verify(x => x.ObterTodosAsync(), Times.Once);
+        Assert.Empty(resultado);
+    }
 }

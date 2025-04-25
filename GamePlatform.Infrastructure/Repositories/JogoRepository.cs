@@ -29,4 +29,9 @@ public class JogoRepository : IJogoRepository
     {
         return await _context.Jogos.FindAsync(id);
     }
+
+    public async Task<IEnumerable<Jogo>> ObterTodosAsync()
+    {
+        return await _context.Jogos.ToListAsync();
+    }
 }
