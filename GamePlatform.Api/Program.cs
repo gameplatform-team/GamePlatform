@@ -1,11 +1,13 @@
+using System.Reflection;
+using System.Text;
 using GamePlatform.Api.Middlewares;
 using GamePlatform.Application.Configuration;
 using GamePlatform.Infrastructure.Contexts;
 using GamePlatform.Infrastructure.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,7 @@ builder.Host.UseSerilog();
 var chaveJwt = builder.Configuration["Jwt:Key"];
 
 if (string.IsNullOrEmpty(chaveJwt))
-    throw new InvalidOperationException("A chave JWT (Jwt:Key) n„o est· configurada!");
+    throw new InvalidOperationException("A chave JWT (Jwt:Key) nÔøΩo estÔøΩ configurada!");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -38,16 +40,47 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Adicionar configuraÁıes do banco de dados e serviÁos da infraestrutura
+// Adicionar configuraÔøΩÔøΩes do banco de dados e serviÔøΩos da infraestrutura
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
-// Adicionar serviÁos da camada de aplicaÁ„o
+// Adicionar serviÔøΩos da camada de aplicaÔøΩÔøΩo
 builder.Services.AddApplicationServices();
 
 // Controllers e Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description =
+            "JWT Authorization Header - utilizado com Bearer Authentication.\r\n\r\n" +
+            "Digite 'Bearer' [espa√ßo] e ent√£o seu token no campo abaixo.\r\n\r\n" +
+            "Exemplo (informar sem as aspas): 'Bearer 12345abcdef'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+    });
+    
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            []
+        }
+    });
+    
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 
 var app = builder.Build();
 
