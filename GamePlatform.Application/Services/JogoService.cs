@@ -35,7 +35,7 @@ public class JogoService : IJogoService
         if (jogo == null)
             return new JogoResponseDto(false, "Jogo não encontrado");
         
-        return new JogoResponseDto(true, "Jogo encontrado", jogo);
+        return new JogoResponseDto(true, string.Empty, jogo);
     }
 
     public async Task<IEnumerable<Jogo>> ObterTodosAsync(string? titulo = null, decimal? precoMinimo = null, decimal? precoMaximo = null)
@@ -71,5 +71,17 @@ public class JogoService : IJogoService
         await _jogoRepository.AtualizarAsync(jogoExistente);
     
         return new BaseResponseDto(true, "Jogo atualizado com sucesso");
+    }
+
+    public async Task<BaseResponseDto> RemoverAsync(Guid id)
+    {
+        var jogoExistente = await _jogoRepository.ObterPorIdAsync(id);
+    
+        if (jogoExistente == null)
+            return new BaseResponseDto(false, "Jogo não encontrado");
+        
+        await _jogoRepository.RemoverAsync(jogoExistente);
+        
+        return new BaseResponseDto(true, "Jogo removido com sucesso");
     }
 }

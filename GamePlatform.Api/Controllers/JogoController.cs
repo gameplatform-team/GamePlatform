@@ -76,7 +76,7 @@ public class JogoController : ControllerBase
     }
     
     /// <summary>
-    /// Atualiza um jogo
+    /// Atualiza um jogo na plataforma
     /// </summary>
     /// <param name="jogoDto">Dados do jogo</param>
     /// <response code="200">Jogo atualizado com sucesso</response>
@@ -90,5 +90,22 @@ public class JogoController : ControllerBase
         var resultado = await _jogoService.AtualizarAsync(jogoDto);
         
         return !resultado.Sucesso ? BadRequest(resultado) : Ok(resultado);
+    }
+
+    /// <summary>
+    /// Remove um jogo da plataforma
+    /// </summary>
+    /// <param name="id">ID do jogo</param>
+    /// <response code="200">Jogo removido com sucesso</response>
+    /// <response code="404">Jogo não encontrado</response>
+    [ProducesResponseType(typeof(BaseResponseDto), 200)]
+    [ProducesResponseType(typeof(BaseResponseDto), 404)]
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+    {
+        var resultado = await _jogoService.RemoverAsync(id);
+        
+        return !resultado.Sucesso ? NotFound(resultado) : Ok(resultado);
     }
 }

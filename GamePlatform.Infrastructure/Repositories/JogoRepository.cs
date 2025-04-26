@@ -41,9 +41,15 @@ public class JogoRepository : IJogoRepository
         return await query.ToListAsync();
     }
 
-    public async Task AtualizarAsync(Jogo jogoExistente)
+    public async Task AtualizarAsync(Jogo jogo)
     {
-        _context.Update(jogoExistente);
+        _context.Jogos.Update(jogo);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RemoverAsync(Jogo jogo)
+    {
+        _context.Jogos.Remove(jogo);
         await _context.SaveChangesAsync();
     }
 }

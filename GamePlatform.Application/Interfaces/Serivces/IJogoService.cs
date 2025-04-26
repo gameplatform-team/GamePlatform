@@ -10,4 +10,5 @@ public interface IJogoService
     public Task<JogoResponseDto> ObterPorIdAsync(Guid id);
     public Task<IEnumerable<Jogo>> ObterTodosAsync(string? titulo = null, decimal? precoMinimo = null, decimal? precoMaximo = null);
     public Task<BaseResponseDto> AtualizarAsync(AtualizarJogoDto jogoDto);
+    public Task<BaseResponseDto> RemoverAsync(Guid id);
 }

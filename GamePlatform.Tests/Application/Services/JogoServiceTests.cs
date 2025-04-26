@@ -71,7 +71,6 @@ public class JogoServiceTests
         _jogoRepoMock.Verify(x => x.ObterPorIdAsync(It.IsAny<Guid>()), Times.Once);
         Assert.Equivalent(jogo, resultado.Jogo, true);
         Assert.True(resultado.Sucesso);
-        Assert.Equal("Jogo encontrado", resultado.Mensagem);
     }
     
     [Fact]
@@ -203,5 +202,49 @@ public class JogoServiceTests
         _jogoRepoMock.Verify(x => x.AtualizarAsync(It.IsAny<Jogo>()), Times.Once);
         Assert.True(resultado.Sucesso);
         Assert.Equal("Jogo atualizado com sucesso", resultado.Mensagem);
+    }
+    
+    [Fact]
+    public async Task RemoverAsync_DeveRetornarErro_QuandoIdNaoEncontrado()
+    {
+        // Arrange
+        var jogoId = Guid.NewGuid();
+        
+        _jogoRepoMock
+            .Setup(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogoId)))
+            .ReturnsAsync((Jogo?)null);
+        
+        // Act
+        var resultado = await _jogoService.RemoverAsync(jogoId);
+        
+        // Assert
+        _jogoRepoMock.Verify(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogoId)), Times.Once);
+        _jogoRepoMock.Verify(x => x.RemoverAsync(It.IsAny<Jogo>()), Times.Never);
+        Assert.False(resultado.Sucesso);
+        Assert.Equal("Jogo não encontrado", resultado.Mensagem);
+    }
+    
+    [Fact]
+    public async Task RemoverAsync_DeveRetornarSucesso_QuandoJogoRemovido()
+    {
+        // Arrange
+        var jogo = new Jogo("Jogo Existente", 99.99m);
+        
+        _jogoRepoMock
+            .Setup(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogo.Id)))
+            .ReturnsAsync(jogo);
+        
+        _jogoRepoMock
+            .Setup(x => x.RemoverAsync(It.Is<Jogo>(j => j == jogo)))
+            .Returns(Task.CompletedTask);
+        
+        // Act
+        var resultado = await _jogoService.RemoverAsync(jogo.Id);
+        
+        // Assert
+        _jogoRepoMock.Verify(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogo.Id)), Times.Once);
+        _jogoRepoMock.Verify(x => x.RemoverAsync(It.Is<Jogo>(j => j == jogo)), Times.Once);
+        Assert.True(resultado.Sucesso);
+        Assert.Equal("Jogo removido com sucesso", resultado.Mensagem);
     }
 }
