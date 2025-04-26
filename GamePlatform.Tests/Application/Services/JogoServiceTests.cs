@@ -124,4 +124,84 @@ public class JogoServiceTests
         _jogoRepoMock.Verify(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>()), Times.Once);
         Assert.Empty(resultado);
     }
+    
+    [Fact]
+    public async Task AtualizarAsync_DeveRetornarErro_QuandoJogoNaoEncontrado()
+    {
+        // Arrange
+        var jogoDto = new AtualizarJogoDto { Id = Guid.NewGuid() , Titulo = "Novo Nome Do Jogo", Preco = 129.99m };
+
+        _jogoRepoMock
+            .Setup(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogoDto.Id)))
+            .ReturnsAsync((Jogo?)null);
+
+        // Act
+        var resultado = await _jogoService.AtualizarAsync(jogoDto);
+
+        // Assert
+        _jogoRepoMock.Verify(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogoDto.Id)), Times.Once);
+        _jogoRepoMock.Verify(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>()), Times.Never);
+        _jogoRepoMock.Verify(x => x.AtualizarAsync(It.IsAny<Jogo>()), Times.Never);
+        Assert.False(resultado.Sucesso);
+        Assert.Equal("Jogo não encontrado", resultado.Mensagem);
+    }
+    
+    [Fact]
+    public async Task AtualizarAsync_DeveRetornarErro_QuandoOutroJogoComMesmoNomeExiste()
+    {
+        // Arrange
+        var jogoDto = new AtualizarJogoDto { Id = Guid.NewGuid() , Titulo = "Novo Nome Do Jogo", Preco = 129.99m };
+        var jogoExistente = new Jogo("Nome Do Jogo", 159.99m);
+
+        _jogoRepoMock
+            .Setup(x => x.ObterPorIdAsync(It.Is<Guid>(
+                g => g == jogoDto.Id)))
+            .ReturnsAsync(jogoExistente);
+        
+        _jogoRepoMock
+            .Setup(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>()))
+            .ReturnsAsync([ new Jogo("Novo Nome Do Jogo", 99.99m)]);
+
+        // Act
+        var resultado = await _jogoService.AtualizarAsync(jogoDto);
+
+        // Assert
+        _jogoRepoMock.Verify(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogoDto.Id)), Times.Once);
+        _jogoRepoMock.Verify(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>()), Times.Once);
+        _jogoRepoMock.Verify(x => x.AtualizarAsync(It.IsAny<Jogo>()), Times.Never);
+        Assert.False(resultado.Sucesso);
+        Assert.Equal("Já existe outro jogo com este título", resultado.Mensagem);
+    }
+    
+    [Fact]
+    public async Task AtualizarAsync_DeveRetornarSucesso_QuandoOutroJogoComMesmoNomeNaoExiste()
+    {
+        // Arrange
+        var jogoDto = new AtualizarJogoDto { Id = Guid.NewGuid() , Titulo = "Novo Nome Do Jogo", Preco = 129.99m };
+        var jogoExistente = new Jogo("Nome Do Jogo", 159.99m);
+
+        _jogoRepoMock
+            .Setup(x => x.ObterPorIdAsync(It.Is<Guid>(
+                g => g == jogoDto.Id)))
+            .ReturnsAsync(jogoExistente);
+        
+        _jogoRepoMock
+            .Setup(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>()))
+            .ReturnsAsync([]);
+        
+        _jogoRepoMock
+            .Setup(x => x.AtualizarAsync(It.Is<Jogo>(
+                j => j.Id == jogoDto.Id && j.Titulo == jogoDto.Titulo && j.Preco == jogoDto.Preco)))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var resultado = await _jogoService.AtualizarAsync(jogoDto);
+
+        // Assert
+        _jogoRepoMock.Verify(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogoDto.Id)), Times.Once);
+        _jogoRepoMock.Verify(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>()), Times.Once);
+        _jogoRepoMock.Verify(x => x.AtualizarAsync(It.IsAny<Jogo>()), Times.Once);
+        Assert.True(resultado.Sucesso);
+        Assert.Equal("Jogo atualizado com sucesso", resultado.Mensagem);
+    }
 }

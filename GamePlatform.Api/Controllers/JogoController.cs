@@ -74,4 +74,21 @@ public class JogoController : ControllerBase
         
         return !resultado.Sucesso ? NotFound(resultado) : Ok(resultado);
     }
+    
+    /// <summary>
+    /// Atualiza um jogo
+    /// </summary>
+    /// <param name="jogoDto">Dados do jogo</param>
+    /// <response code="200">Jogo atualizado com sucesso</response>
+    /// <response code="400">Ocorreu um erro ao atualizar o jogo</response>
+    [ProducesResponseType(typeof(BaseResponseDto), 200)]
+    [ProducesResponseType(typeof(BaseResponseDto), 400)]
+    [HttpPut]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> PutAsync(AtualizarJogoDto jogoDto)
+    {
+        var resultado = await _jogoService.AtualizarAsync(jogoDto);
+        
+        return !resultado.Sucesso ? BadRequest(resultado) : Ok(resultado);
+    }
 }

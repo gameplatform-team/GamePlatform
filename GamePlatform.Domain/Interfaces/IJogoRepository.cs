@@ -9,4 +9,5 @@ public interface IJogoRepository
     public Task AdicionarAsync(Jogo jogo);
     public Task<Jogo?> ObterPorIdAsync(Guid id);
     public Task<IEnumerable<Jogo>> ObterTodosAsync(Expression<Func<Jogo, bool>>? filtro = null);
+    public Task AtualizarAsync(Jogo jogoExistente);
 }

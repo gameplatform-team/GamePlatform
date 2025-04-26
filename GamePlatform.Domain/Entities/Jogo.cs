@@ -10,4 +10,11 @@ public class Jogo : BaseEntity
         Titulo = titulo;
         Preco = preco;
     }
+
+    public void Atualizar(string titulo, decimal preco)
+    {
+        Titulo = titulo;
+        Preco = preco;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

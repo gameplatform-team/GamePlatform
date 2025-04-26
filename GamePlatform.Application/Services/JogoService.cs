@@ -52,4 +52,24 @@ public class JogoService : IJogoService
         
         return await _jogoRepository.ObterTodosAsync(filtro);
     }
+
+    public async Task<BaseResponseDto> AtualizarAsync(AtualizarJogoDto jogoDto)
+    {
+        var jogoExistente = await _jogoRepository.ObterPorIdAsync(jogoDto.Id);
+    
+        if (jogoExistente == null)
+            return new BaseResponseDto(false, "Jogo não encontrado");
+    
+        var jogosComMesmoTitulo = await _jogoRepository.ObterTodosAsync(
+            j => j.Titulo.ToLower() == jogoDto.Titulo.ToLower() && j.Id != jogoDto.Id);
+    
+        if (jogosComMesmoTitulo.Any())
+            return new BaseResponseDto(false, "Já existe outro jogo com este título");
+
+        jogoExistente.Atualizar(jogoDto.Titulo, jogoDto.Preco);
+    
+        await _jogoRepository.AtualizarAsync(jogoExistente);
+    
+        return new BaseResponseDto(true, "Jogo atualizado com sucesso");
+    }
 }
