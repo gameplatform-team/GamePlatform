@@ -35,23 +35,29 @@ public class JogoController : ControllerBase
         
         return !resultado.Sucesso ? BadRequest(resultado) : StatusCode(201, resultado);
     }
-    
+
     /// <summary>
-    /// Obtém todos os jogos cadastrados na plataforma
+    /// Obtém lista de jogos cadastrados na plataforma
     /// </summary>
+    /// <param name="titulo">Filtrar jogos que o título contenha o texto informado</param>
+    /// <param name="precoMinimo">Filtrar jogos por valor mínimo</param>
+    /// <param name="precoMaximo">Filtrar jogos por valor máximo</param>
     /// <response code="200">Lista de jogos cadastrados</response>
     /// <response code="204">Nenhum jogo encontrado</response>
     [ProducesResponseType(typeof(IEnumerable<Jogo>), 200)]
     [ProducesResponseType(typeof(BaseResponseDto), 404)]
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAllAsync(
+        [FromQuery] string? titulo = null,
+        [FromQuery] decimal? precoMinimo = null,
+        [FromQuery] decimal? precoMaximo = null)
     {
-        var resultado = await _jogoService.ObterTodosAsync();
+        var resultado = await _jogoService.ObterTodosAsync(titulo, precoMinimo, precoMaximo);
         
         return !resultado.Any() ? NoContent() : Ok(resultado);
     }
-    
+
     /// <summary>
     /// Obtém um jogo pelo ID
     /// </summary>

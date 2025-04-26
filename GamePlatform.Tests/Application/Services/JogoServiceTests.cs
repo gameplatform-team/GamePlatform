@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using GamePlatform.Application.DTOs.Jogo;
 using GamePlatform.Application.Services;
 using GamePlatform.Domain.Entities;
@@ -99,13 +100,13 @@ public class JogoServiceTests
             new("Jogo 2", 149.99m)
         };
         
-        _jogoRepoMock.Setup(x => x.ObterTodosAsync()).ReturnsAsync(jogos);
+        _jogoRepoMock.Setup(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>())).ReturnsAsync(jogos);
         
         // Act
         var resultado = await _jogoService.ObterTodosAsync();
         
         // Assert
-        _jogoRepoMock.Verify(x => x.ObterTodosAsync(), Times.Once);
+        _jogoRepoMock.Verify(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>()), Times.Once);
         Assert.Equal(2, resultado.Count());
         Assert.Equivalent(jogos, resultado, true);
     }
@@ -114,13 +115,13 @@ public class JogoServiceTests
     public async Task ObterTodosAsync_DeveRetornarListaVazia_QuandoNaoExistemJogos()
     {
         // Arrange
-        _jogoRepoMock.Setup(x => x.ObterTodosAsync()).ReturnsAsync(new List<Jogo>());
+        _jogoRepoMock.Setup(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>())).ReturnsAsync(new List<Jogo>());
         
         // Act
         var resultado = await _jogoService.ObterTodosAsync();
         
         // Assert
-        _jogoRepoMock.Verify(x => x.ObterTodosAsync(), Times.Once);
+        _jogoRepoMock.Verify(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>()), Times.Once);
         Assert.Empty(resultado);
     }
 }

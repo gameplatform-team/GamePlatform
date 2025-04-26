@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using GamePlatform.Domain.Entities;
 using GamePlatform.Domain.Interfaces;
 using GamePlatform.Infrastructure.Contexts;
@@ -30,8 +31,13 @@ public class JogoRepository : IJogoRepository
         return await _context.Jogos.FindAsync(id);
     }
 
-    public async Task<IEnumerable<Jogo>> ObterTodosAsync()
+    public async Task<IEnumerable<Jogo>> ObterTodosAsync(Expression<Func<Jogo, bool>>? filtro = null)
     {
-        return await _context.Jogos.ToListAsync();
+        var query = _context.Jogos.AsQueryable();
+
+        if (filtro != null)
+            query = query.Where(filtro);
+
+        return await query.ToListAsync();
     }
 }

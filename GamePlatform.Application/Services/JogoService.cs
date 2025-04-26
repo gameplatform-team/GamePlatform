@@ -1,8 +1,10 @@
+using System.Linq.Expressions;
 using GamePlatform.Application.DTOs;
 using GamePlatform.Application.DTOs.Jogo;
 using GamePlatform.Application.Interfaces.Serivces;
 using GamePlatform.Domain.Entities;
 using GamePlatform.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace GamePlatform.Application.Services;
 
@@ -36,8 +38,18 @@ public class JogoService : IJogoService
         return new JogoResponseDto(true, "Jogo encontrado", jogo);
     }
 
-    public async Task<IEnumerable<Jogo>> ObterTodosAsync()
+    public async Task<IEnumerable<Jogo>> ObterTodosAsync(string? titulo = null, decimal? precoMinimo = null, decimal? precoMaximo = null)
     {
-        return await _jogoRepository.ObterTodosAsync();
+        Expression<Func<Jogo, bool>>? filtro = null;
+
+        if (!string.IsNullOrWhiteSpace(titulo) || precoMinimo.HasValue || precoMaximo.HasValue)
+        {
+            filtro = jogo =>
+                (string.IsNullOrWhiteSpace(titulo) || EF.Functions.Like(jogo.Titulo.ToLower(), $"%{titulo.ToLower()}%")) &&
+                (!precoMinimo.HasValue || jogo.Preco >= precoMinimo.Value) &&
+                (!precoMaximo.HasValue || jogo.Preco <= precoMaximo.Value);
+        }
+        
+        return await _jogoRepository.ObterTodosAsync(filtro);
     }
 }
