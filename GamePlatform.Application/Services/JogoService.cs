@@ -28,17 +28,29 @@ public class JogoService : IJogoService
         return new BaseResponseDto(true, "Jogo cadastrado com sucesso");
     }
 
-    public async Task<JogoResponseDto> ObterPorIdAsync(Guid id)
+    public async Task<BaseResponseDto> ObterPorIdAsync(Guid id)
     {
         var jogo = await _jogoRepository.ObterPorIdAsync(id);
         
         if (jogo == null)
-            return new JogoResponseDto(false, "Jogo não encontrado");
+            return new BaseResponseDto(false, "Jogo não encontrado");
+
+        var jogoDto = new JogoDto
+        {
+            Id = jogo.Id,
+            Titulo = jogo.Titulo,
+            Preco = jogo.Preco
+        };
         
-        return new JogoResponseDto(true, string.Empty, jogo);
+        return new DataResponseDto<JogoDto>(true, string.Empty, jogoDto);
     }
 
-    public async Task<IEnumerable<Jogo>> ObterTodosAsync(string? titulo = null, decimal? precoMinimo = null, decimal? precoMaximo = null)
+    public async Task<ResultadoPaginadoDto<JogoDto>> ObterTodosAsync(
+        string? titulo = null,
+        decimal? precoMinimo = null,
+        decimal? precoMaximo = null,
+        int numeroPagina = 1,
+        int tamanhoPagina = 10)
     {
         Expression<Func<Jogo, bool>>? filtro = null;
 
@@ -50,7 +62,22 @@ public class JogoService : IJogoService
                 (!precoMaximo.HasValue || jogo.Preco <= precoMaximo.Value);
         }
         
-        return await _jogoRepository.ObterTodosAsync(filtro);
+        var (jogos, totalDeItens) = await _jogoRepository.ObterTodosPaginadoAsync(filtro, numeroPagina, tamanhoPagina);
+        
+        var result = new ResultadoPaginadoDto<JogoDto>()
+        {
+            Itens = jogos.Select(jogo => new JogoDto
+            {
+                Id = jogo.Id,
+                Titulo = jogo.Titulo,
+                Preco = jogo.Preco
+            }),
+            NumeroPagina = numeroPagina,
+            TamanhoPagina = tamanhoPagina,
+            TotalDeItens = totalDeItens
+        };
+        
+        return result;
     }
 
     public async Task<BaseResponseDto> AtualizarAsync(AtualizarJogoDto jogoDto)

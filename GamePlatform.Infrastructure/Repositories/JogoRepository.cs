@@ -30,7 +30,7 @@ public class JogoRepository : IJogoRepository
     {
         return await _context.Jogos.FindAsync(id);
     }
-
+    
     public async Task<IEnumerable<Jogo>> ObterTodosAsync(Expression<Func<Jogo, bool>>? filtro = null)
     {
         var query = _context.Jogos.AsQueryable();
@@ -39,6 +39,26 @@ public class JogoRepository : IJogoRepository
             query = query.Where(filtro);
 
         return await query.ToListAsync();
+    }
+
+    public async Task<(IEnumerable<Jogo> Jogos, int TotalDeItens)> ObterTodosPaginadoAsync(
+        Expression<Func<Jogo, bool>>? filtro = null,
+        int numeroPagina = 1,
+        int tamanhoPagina = 10)
+    {
+        var query = _context.Jogos.AsQueryable();
+
+        if (filtro != null)
+            query = query.Where(filtro);
+        
+        var totalDeItens = await query.CountAsync();
+
+        var jogos = await query
+            .Skip((numeroPagina - 1) * tamanhoPagina)
+            .Take(tamanhoPagina)
+            .ToListAsync();
+
+        return (jogos, totalDeItens);
     }
 
     public async Task AtualizarAsync(Jogo jogo)

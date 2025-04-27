@@ -42,20 +42,27 @@ public class JogoController : ControllerBase
     /// <param name="titulo">Filtrar jogos que o título contenha o texto informado</param>
     /// <param name="precoMinimo">Filtrar jogos por valor mínimo</param>
     /// <param name="precoMaximo">Filtrar jogos por valor máximo</param>
+    /// <param name="numeroPagina">Número da página solicitada</param>
+    /// <param name="tamanhoPagina">Quantidade de itens por página</param>
     /// <response code="200">Lista de jogos cadastrados</response>
     /// <response code="204">Nenhum jogo encontrado</response>
     [ProducesResponseType(typeof(IEnumerable<Jogo>), 200)]
-    [ProducesResponseType(typeof(BaseResponseDto), 404)]
+    [ProducesResponseType(typeof(ResultadoPaginadoDto<JogoDto>), 404)]
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetAllAsync(
         [FromQuery] string? titulo = null,
         [FromQuery] decimal? precoMinimo = null,
-        [FromQuery] decimal? precoMaximo = null)
+        [FromQuery] decimal? precoMaximo = null,
+        [FromQuery] int numeroPagina = 1,
+        [FromQuery] int tamanhoPagina = 10)
     {
-        var resultado = await _jogoService.ObterTodosAsync(titulo, precoMinimo, precoMaximo);
+        var resultado = await _jogoService.ObterTodosAsync(titulo, precoMinimo, precoMaximo, numeroPagina, tamanhoPagina);
+
+        if (!resultado.Itens.Any())
+            return NoContent();
         
-        return !resultado.Any() ? NoContent() : Ok(resultado);
+        return Ok(resultado);
     }
 
     /// <summary>
@@ -64,7 +71,7 @@ public class JogoController : ControllerBase
     /// <param name="id">ID do jogo</param>
     /// <response code="200">Jogo encontrado com sucesso</response>
     /// <response code="404">Jogo não encontrado</response>
-    [ProducesResponseType(typeof(JogoResponseDto), 200)]
+    [ProducesResponseType(typeof(DataResponseDto<JogoDto>), 200)]
     [ProducesResponseType(typeof(BaseResponseDto), 404)]
     [HttpGet("{id:guid}")]
     [Authorize]
