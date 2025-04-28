@@ -46,8 +46,8 @@ public class JogoController : ControllerBase
     /// <param name="tamanhoPagina">Quantidade de itens por página</param>
     /// <response code="200">Lista de jogos cadastrados</response>
     /// <response code="204">Nenhum jogo encontrado</response>
-    [ProducesResponseType(typeof(IEnumerable<Jogo>), 200)]
-    [ProducesResponseType(typeof(ResultadoPaginadoDto<JogoDto>), 404)]
+    [ProducesResponseType(typeof(ResultadoPaginadoDto<JogoDto>), 200)]
+    [ProducesResponseType(204)]
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetAllAsync(
