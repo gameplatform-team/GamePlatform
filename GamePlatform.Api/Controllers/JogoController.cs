@@ -1,7 +1,6 @@
 using GamePlatform.Application.DTOs;
 using GamePlatform.Application.DTOs.Jogo;
 using GamePlatform.Application.Interfaces.Serivces;
-using GamePlatform.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

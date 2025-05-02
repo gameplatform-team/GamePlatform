@@ -14,4 +14,21 @@ public class Usuario : BaseEntity
         SenhaHash = senhaHash;
         Role = role;
     }
+
+    public void Atualizar(string? nome, string? email, string? novaSenha)
+    {
+        if (!string.IsNullOrEmpty(nome))
+            Nome = nome;
+
+        if (!string.IsNullOrEmpty(email))
+            Email = email;
+
+        if (!string.IsNullOrEmpty(novaSenha))
+            SenhaHash = BCrypt.Net.BCrypt.HashPassword(novaSenha);
+    }
+
+    public void PromoverParaAdmin()
+    {
+        Role = "Admin";
+    }
 }

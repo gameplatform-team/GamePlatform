@@ -1,4 +1,5 @@
 ﻿using GamePlatform.Application.DTOs;
+using GamePlatform.Application.DTOs.Usuario;
 using GamePlatform.Application.Interfaces.Serivces;
 using GamePlatform.Application.Validators;
 using GamePlatform.Domain.Entities;
@@ -20,6 +21,59 @@ public class UsuarioService : IUsuarioService
     {
         _usuarioRepository = usuarioRepository;
         _config = config;
+    }
+
+    public async Task<UsuarioDto?> ObterPorIdAsync(Guid id)
+    {
+        var usuario = await _usuarioRepository.ObterPorIdAsync(id);
+
+        return usuario is null ? null : new UsuarioDto(usuario.Id, usuario.Nome, usuario.Email, usuario.Role);
+    }
+
+    public async Task<bool> AtualizarAsync(Guid id, AtualizarUsuarioDto dto)
+    {
+        var usuario = await _usuarioRepository.ObterPorIdAsync(id);
+        
+        if (usuario == null) return false;
+
+        usuario.Atualizar(dto.Nome, dto.Email, dto.NovaSenha);
+
+        await _usuarioRepository.SalvarAsync();
+
+        return true;
+    }
+
+    public async Task<bool> ExcluirAsync(Guid id)
+    {
+        var usuario = await _usuarioRepository.ObterPorIdAsync(id);
+
+        if (usuario is null) return false;
+
+        _usuarioRepository.Remover(usuario);
+
+        await _usuarioRepository.SalvarAsync();  
+
+        return true;
+    }
+
+    public async Task<IEnumerable<UsuarioDto>> ListarTodosAsync()
+    {
+        var usuarios = await _usuarioRepository.ListarTodosAsync();
+
+        return usuarios.Select(u => new UsuarioDto(u.Id, u.Nome, u.Email, u.Role));
+    }
+
+    public async Task<bool> PromoverParaAdminAsync(Guid id)
+    {
+        var usuario = await _usuarioRepository.ObterPorIdAsync(id);
+
+        if (usuario is null) return false;
+
+        usuario.PromoverParaAdmin();  
+
+        await _usuarioRepository.SalvarAsync();
+
+        return true;
     }
 
     public async Task<(bool sucesso, string mensagem)> RegistrarAsync(RegistrarUsuarioDto dto)
