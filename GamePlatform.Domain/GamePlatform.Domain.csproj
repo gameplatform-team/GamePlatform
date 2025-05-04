@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+	<InternalsVisibleTo Include="GamePlatform.Tests" />
   </ItemGroup>
 
 </Project>

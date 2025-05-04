@@ -1,4 +1,5 @@
 ﻿using GamePlatform.Application.DTOs;
+using GamePlatform.Application.DTOs.Usuario;
 using GamePlatform.Application.Services;
 using GamePlatform.Domain.Entities;
 using GamePlatform.Domain.Interfaces;
@@ -18,7 +19,6 @@ public class UsuarioServiceTests
     {
         _usuarioRepoMock = new Mock<IUsuarioRepository>();
         _configMock = new Mock<IConfiguration>();
-
         _usuarioService = new UsuarioService(_usuarioRepoMock.Object, _configMock.Object);
     }
 
@@ -70,5 +70,128 @@ public class UsuarioServiceTests
 
         Assert.True(resultado.sucesso);
         Assert.Equal("Usuário registrado com sucesso.", resultado.mensagem);
+    }
+
+    [Fact]
+    public async Task ObterPorIdAsync_DeveRetornarUsuario_SeExistir()
+    {
+        var id = Guid.NewGuid();
+
+        var usuario = new Usuario("João", "joao@email.com", "senhaHash");
+        usuario.Id = id;
+
+        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(id)).ReturnsAsync(usuario);
+
+        var resultado = await _usuarioService.ObterPorIdAsync(id);
+
+        Assert.NotNull(resultado);
+        Assert.Equal(id, resultado!.Id);
+        Assert.Equal("João", resultado.Nome);
+    }
+
+    [Fact]
+    public async Task ObterPorIdAsync_DeveRetornarNull_SeNaoEncontrado()
+    {
+        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(It.IsAny<Guid>())).ReturnsAsync((Usuario?)null);
+
+        var resultado = await _usuarioService.ObterPorIdAsync(Guid.NewGuid());
+
+        Assert.Null(resultado);
+    }
+
+    [Fact]
+    public async Task AtualizarAsync_DeveAtualizarDados_SeUsuarioExistir()
+    {
+        var id = Guid.NewGuid();
+
+        var usuario = new Usuario("João", "joao@email.com", "senhaHash")
+        {
+            Id = id
+        };
+
+        var dto = new AtualizarUsuarioDto
+        {
+            Nome = "Novo Nome",
+            Email = "novo@email.com",
+            NovaSenha = "NovaSenha123!"
+        };
+
+        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(id)).ReturnsAsync(usuario);
+
+        var resultado = await _usuarioService.AtualizarAsync(id, dto);
+
+        Assert.True(resultado);
+        _usuarioRepoMock.Verify(r => r.SalvarAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task AtualizarAsync_DeveRetornarFalse_SeUsuarioNaoExistir()
+    {
+        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(It.IsAny<Guid>())).ReturnsAsync((Usuario?)null);
+
+        var resultado = await _usuarioService.AtualizarAsync(Guid.NewGuid(), new AtualizarUsuarioDto());
+
+        Assert.False(resultado);
+    }
+
+    [Fact]
+    public async Task ExcluirAsync_DeveRemoverUsuario_SeExistir()
+    {
+        var usuario = new Usuario("João", "joao@email.com", "senhaHash");
+        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(usuario);
+
+        var resultado = await _usuarioService.ExcluirAsync(Guid.NewGuid());
+
+        Assert.True(resultado);
+        _usuarioRepoMock.Verify(r => r.Remover(usuario), Times.Once);
+        _usuarioRepoMock.Verify(r => r.SalvarAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task ExcluirAsync_DeveRetornarFalse_SeNaoEncontrado()
+    {
+        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(It.IsAny<Guid>())).ReturnsAsync((Usuario?)null);
+
+        var resultado = await _usuarioService.ExcluirAsync(Guid.NewGuid());
+
+        Assert.False(resultado);
+    }
+
+    [Fact]
+    public async Task ListarTodosAsync_DeveRetornarListaDeUsuarios()
+    {
+        var usuarios = new List<Usuario>
+        {
+            new Usuario("João", "joao@email.com", "hash"),
+            new Usuario("Maria", "maria@email.com", "hash")
+        };
+
+        _usuarioRepoMock.Setup(r => r.ListarTodosAsync()).ReturnsAsync(usuarios);
+
+        var resultado = await _usuarioService.ListarTodosAsync();
+
+        Assert.Equal(2, resultado.Count());
+    }
+
+    [Fact]
+    public async Task PromoverParaAdminAsync_DevePromover_SeUsuarioExistir()
+    {
+        var usuario = new Usuario("João", "joao@email.com", "hash");
+        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(usuario);
+
+        var resultado = await _usuarioService.PromoverParaAdminAsync(Guid.NewGuid());
+
+        Assert.True(resultado);
+        _usuarioRepoMock.Verify(r => r.SalvarAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task PromoverParaAdminAsync_DeveRetornarFalse_SeNaoEncontrado()
+    {
+        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(It.IsAny<Guid>())).ReturnsAsync((Usuario?)null);
+
+        var resultado = await _usuarioService.PromoverParaAdminAsync(Guid.NewGuid());
+
+        Assert.False(resultado);
     }
 }
