@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamePlatform.Api", "GamePla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamePlatform.Application", "GamePlatform.Application\GamePlatform.Application.csproj", "{6E2D8ED4-1930-49C3-8CAB-02617DCA4ED8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamePlatform.Infrastructure", "GamePlatform.Infrastructure\GamePlatform.Infrastructure.csproj", "{7B4B30E1-8566-4F98-9F01-49518231692D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamePlatform.Infrastructure", "GamePlatform.Infrastructure\GamePlatform.Infrastructure.csproj", "{7B4B30E1-8566-4F98-9F01-49518231692D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamePlatform.Domain", "GamePlatform.Domain\GamePlatform.Domain.csproj", "{8EE6BD66-3D0A-453D-A41D-294DC0A279A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamePlatform.Domain", "GamePlatform.Domain\GamePlatform.Domain.csproj", "{8EE6BD66-3D0A-453D-A41D-294DC0A279A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamePlatform.Tests", "GamePlatform.Tests\GamePlatform.Tests.csproj", "{EA951714-C154-44B1-9310-232F5F968EFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamePlatform.Tests", "GamePlatform.Tests\GamePlatform.Tests.csproj", "{EA951714-C154-44B1-9310-232F5F968EFA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{14E385D6-0839-417C-AC66-7B9186B12A95}"
 	ProjectSection(SolutionItems) = preProject

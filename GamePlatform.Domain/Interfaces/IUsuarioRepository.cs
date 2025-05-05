@@ -11,4 +11,5 @@ public interface IUsuarioRepository
     Task<bool> ExisteEmailAsync(string email);
     Task AdicionarAsync(Usuario usuario);
     Task SalvarAsync();
+    Task<bool> EmailJaExisteAsync(string email, Guid? id = null);
 }

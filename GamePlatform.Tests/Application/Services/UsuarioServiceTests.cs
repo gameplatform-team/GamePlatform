@@ -4,6 +4,7 @@ using GamePlatform.Application.Services;
 using GamePlatform.Domain.Entities;
 using GamePlatform.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -13,13 +14,15 @@ public class UsuarioServiceTests
 {
     private readonly Mock<IUsuarioRepository> _usuarioRepoMock;
     private readonly Mock<IConfiguration> _configMock;
+    private readonly Mock<ILogger<UsuarioService>> _logger;
     private readonly UsuarioService _usuarioService;
 
     public UsuarioServiceTests()
     {
         _usuarioRepoMock = new Mock<IUsuarioRepository>();
         _configMock = new Mock<IConfiguration>();
-        _usuarioService = new UsuarioService(_usuarioRepoMock.Object, _configMock.Object);
+        _logger = new Mock<ILogger<UsuarioService>>();
+        _usuarioService = new UsuarioService(_usuarioRepoMock.Object, _configMock.Object, _logger.Object);
     }
 
     [Fact]
@@ -29,8 +32,8 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.RegistrarAsync(dto);
 
-        Assert.False(resultado.sucesso);
-        Assert.Equal("Formato de e-mail inválido.", resultado.mensagem);
+        Assert.False(resultado.Sucesso);
+        Assert.Equal("Formato de e-mail inválido.", resultado.Mensagem);
     }
 
     [Fact]
@@ -40,8 +43,8 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.RegistrarAsync(dto);
 
-        Assert.False(resultado.sucesso);
-        Assert.Equal("A senha deve ter no mínimo 8 caracteres e conter letras, números e caracteres especiais.", resultado.mensagem);
+        Assert.False(resultado.Sucesso);
+        Assert.Equal("A senha deve ter no mínimo 8 caracteres e conter letras, números e caracteres especiais.", resultado.Mensagem);
     }
 
     [Fact]
@@ -53,8 +56,8 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.RegistrarAsync(dto);
 
-        Assert.False(resultado.sucesso);
-        Assert.Equal("E-mail já cadastrado.", resultado.mensagem);
+        Assert.False(resultado.Sucesso);
+        Assert.Equal("E-mail já cadastrado.", resultado.Mensagem);
     }
 
     [Fact]
@@ -68,8 +71,8 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.RegistrarAsync(dto);
 
-        Assert.True(resultado.sucesso);
-        Assert.Equal("Usuário registrado com sucesso.", resultado.mensagem);
+        Assert.True(resultado.Sucesso);
+        Assert.Equal("Usuário registrado com sucesso.", resultado.Mensagem);
     }
 
     [Fact]
@@ -120,7 +123,7 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.AtualizarAsync(id, dto);
 
-        Assert.True(resultado);
+        Assert.True(resultado.Sucesso);
         _usuarioRepoMock.Verify(r => r.SalvarAsync(), Times.Once);
     }
 
@@ -131,7 +134,7 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.AtualizarAsync(Guid.NewGuid(), new AtualizarUsuarioDto());
 
-        Assert.False(resultado);
+        Assert.False(resultado.Sucesso);
     }
 
     [Fact]
@@ -142,7 +145,7 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.ExcluirAsync(Guid.NewGuid());
 
-        Assert.True(resultado);
+        Assert.True(resultado.Sucesso);
         _usuarioRepoMock.Verify(r => r.Remover(usuario), Times.Once);
         _usuarioRepoMock.Verify(r => r.SalvarAsync(), Times.Once);
     }
@@ -154,7 +157,7 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.ExcluirAsync(Guid.NewGuid());
 
-        Assert.False(resultado);
+        Assert.False(resultado.Sucesso);
     }
 
     [Fact]
@@ -181,7 +184,7 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.PromoverParaAdminAsync(Guid.NewGuid());
 
-        Assert.True(resultado);
+        Assert.True(resultado.Sucesso);
         _usuarioRepoMock.Verify(r => r.SalvarAsync(), Times.Once);
     }
 
@@ -192,6 +195,6 @@ public class UsuarioServiceTests
 
         var resultado = await _usuarioService.PromoverParaAdminAsync(Guid.NewGuid());
 
-        Assert.False(resultado);
+        Assert.False(resultado.Sucesso);
     }
 }

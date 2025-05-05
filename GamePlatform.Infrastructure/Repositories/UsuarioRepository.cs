@@ -48,4 +48,10 @@ public class UsuarioRepository : IUsuarioRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task<bool> EmailJaExisteAsync(string email, Guid? id = null)
+    {
+        return await _context.Usuarios
+            .AnyAsync(u => u.Email == email && (id == null || u.Id != id));
+    }
 }
