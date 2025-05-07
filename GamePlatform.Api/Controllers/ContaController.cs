@@ -1,11 +1,11 @@
 ﻿using GamePlatform.Application.DTOs;
-using GamePlatform.Application.Interfaces.Serivces;
+using GamePlatform.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GamePlatform.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/conta")]
 public class ContaController : ControllerBase
 {
     private readonly IUsuarioService _usuarioService;
@@ -18,8 +18,9 @@ public class ContaController : ControllerBase
     /// <summary>
     /// Registra um novo usuário no sistema.
     /// </summary>
-    /// <param name="dto">Objeto contendo as informações do novo usuário.</param>
-    /// <returns>Retorna OK com a mensagem de sucesso ou BadRequest caso haja algum erro no processo de registro.</returns>
+    /// <param name="dto">Dados do usuário para registro</param>
+    /// <response code="200">Usuário registrado com sucesso</response>
+    /// <response code="400">Erro ao registrar o usuário (ex: e-mail já em uso ou dados inválidos)</response>
     [HttpPost("registrar")]
     public async Task<IActionResult> Registrar([FromBody] RegistrarUsuarioDto dto)
     {
@@ -34,8 +35,9 @@ public class ContaController : ControllerBase
     /// <summary>
     /// Realiza o login de um usuário no sistema.
     /// </summary>
-    /// <param name="dto">Objeto contendo as credenciais de login (email e senha) do usuário.</param>
-    /// <returns>Retorna OK com o token JWT gerado se o login for bem-sucedido, ou Unauthorized caso as credenciais estejam incorretas.</returns>
+    /// <param name="dto">Credenciais do usuário (e-mail e senha)</param>
+    /// <response code="200">Login realizado com sucesso. Token JWT retornado.</response>
+    /// <response code="401">Credenciais inválidas</response>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {

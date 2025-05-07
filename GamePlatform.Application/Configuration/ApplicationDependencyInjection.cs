@@ -1,4 +1,4 @@
-﻿using GamePlatform.Application.Interfaces.Serivces;
+﻿using GamePlatform.Application.Interfaces.Services;
 using GamePlatform.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +10,8 @@ public static class ApplicationDependencyInjection
     {
         services.AddScoped<IUsuarioService, UsuarioService>();
         services.AddScoped<IJogoService, JogoService>();
+
+        services.AddScoped<IUsuarioContextService, UsuarioContextService>();
 
         return services;
     }

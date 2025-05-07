@@ -12,7 +12,7 @@ public static class UsuarioValidator
 
     public static bool ValidarSenha(string senha)
     {
-        var regex = new Regex(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
+        var regex = new Regex(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$");
         return regex.IsMatch(senha);
     }
 }

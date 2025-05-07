@@ -1,16 +1,12 @@
-using System.Reflection;
-using System.Text;
-using System.Text.Json.Serialization;
 using GamePlatform.Api.Configuration;
 using GamePlatform.Api.Middlewares;
 using GamePlatform.Application.Configuration;
+using GamePlatform.Application.Interfaces.Services;
+using GamePlatform.Application.Services;
 using GamePlatform.Infrastructure.Contexts;
 using GamePlatform.Infrastructure.Seed;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.HttpLogging;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,10 +23,10 @@ builder.Services.AddCustomHttpLogging();
 // JWT
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
-// Adicionar configura��es do banco de dados e servi�os da infraestrutura
+// Adicionar configuracoes do banco de dados e servicos da infraestrutura
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
-// Adicionar servi�os da camada de aplica��o
+// Adicionar servicos da camada de aplica��o
 builder.Services.AddApplicationServices();
 
 // Controllers e Swagger
@@ -40,6 +36,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithOptions();
+
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

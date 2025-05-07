@@ -1,6 +1,6 @@
 ﻿using GamePlatform.Application.DTOs;
 using GamePlatform.Application.DTOs.Usuario;
-using GamePlatform.Application.Interfaces.Serivces;
+using GamePlatform.Application.Interfaces.Services;
 using GamePlatform.Application.Validators;
 using GamePlatform.Domain.Entities;
 using GamePlatform.Domain.Interfaces;
@@ -18,12 +18,14 @@ public class UsuarioService : IUsuarioService
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IConfiguration _config;
     private readonly ILogger<UsuarioService> _logger;
+    private readonly IUsuarioContextService _usuarioContext;
 
-    public UsuarioService(IUsuarioRepository usuarioRepository, IConfiguration config, ILogger<UsuarioService> logger)
+    public UsuarioService(IUsuarioRepository usuarioRepository, IConfiguration config, ILogger<UsuarioService> logger, IUsuarioContextService usuarioContext)
     {
         _usuarioRepository = usuarioRepository;
         _config = config;
         _logger = logger;
+        _usuarioContext = usuarioContext;
     }
 
     public async Task<UsuarioDto?> ObterPorIdAsync(Guid id)
@@ -50,7 +52,9 @@ public class UsuarioService : IUsuarioService
                 return new BaseResponseDto(false, "Este e-mail já está em uso por outro usuário.");
             }
 
-            usuario.Atualizar(dto.Nome, dto.Email, dto.NovaSenha);
+            var ehAdmin = _usuarioContext.UsuarioEhAdmin();
+
+            usuario.Atualizar(ehAdmin, dto.Nome, dto.Email, dto.NovaSenha, dto.Role);
 
             await _usuarioRepository.SalvarAsync();
 
@@ -99,33 +103,6 @@ public class UsuarioService : IUsuarioService
         return usuarios.Select(u => new UsuarioDto(u.Id, u.Nome, u.Email, u.Role));
     }
 
-    public async Task<BaseResponseDto> PromoverParaAdminAsync(Guid id)
-    {
-        try
-        {
-            var usuario = await _usuarioRepository.ObterPorIdAsync(id);
-
-            if (usuario is null)
-            {
-                _logger.LogWarning("Tentativa de promoção de usuário inexistente: {UserId}", id);
-                return new BaseResponseDto(false, "Usuário não encontrado.");
-            }
-
-            usuario.PromoverParaAdmin();
-
-            await _usuarioRepository.SalvarAsync();
-
-            _logger.LogInformation("Usuário promovido para admin: {UserId}", id);
-
-            return new BaseResponseDto(true, "Usuário promovido para administrador com sucesso.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Erro ao promover usuário {UserId}", id);
-            return new BaseResponseDto(false, "Erro ao promover o usuário.");
-        }
-    }
-
     public async Task<BaseResponseDto> RegistrarAsync(RegistrarUsuarioDto dto)
     {
         try
@@ -156,7 +133,7 @@ public class UsuarioService : IUsuarioService
 
             var senhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
 
-            var usuario = new Usuario(dto.Nome, dto.Email, senhaHash, "Admin");
+            var usuario = new Usuario(dto.Nome, dto.Email, senhaHash, "Usuario");
 
             await _usuarioRepository.AdicionarAsync(usuario);
 

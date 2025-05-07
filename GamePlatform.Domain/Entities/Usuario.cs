@@ -15,7 +15,7 @@ public class Usuario : BaseEntity
         Role = role;
     }
 
-    public void Atualizar(string? nome, string? email, string? novaSenha)
+    public void Atualizar(bool ehAdmin, string? nome, string? email, string? novaSenha, string? role)
     {
         if (!string.IsNullOrEmpty(nome))
             Nome = nome;
@@ -25,6 +25,9 @@ public class Usuario : BaseEntity
 
         if (!string.IsNullOrEmpty(novaSenha))
             SenhaHash = BCrypt.Net.BCrypt.HashPassword(novaSenha);
+
+        if (ehAdmin && !string.IsNullOrEmpty(role))
+            Role = role;
     }
 
     public void PromoverParaAdmin()

@@ -1,8 +1,7 @@
 using GamePlatform.Application.DTOs;
 using GamePlatform.Application.DTOs.Jogo;
-using GamePlatform.Domain.Entities;
 
-namespace GamePlatform.Application.Interfaces.Serivces;
+namespace GamePlatform.Application.Interfaces.Services;
 
 public interface IJogoService
 {

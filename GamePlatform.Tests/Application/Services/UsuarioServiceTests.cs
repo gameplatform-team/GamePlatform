@@ -1,5 +1,6 @@
 ﻿using GamePlatform.Application.DTOs;
 using GamePlatform.Application.DTOs.Usuario;
+using GamePlatform.Application.Interfaces.Services;
 using GamePlatform.Application.Services;
 using GamePlatform.Domain.Entities;
 using GamePlatform.Domain.Interfaces;
@@ -15,6 +16,7 @@ public class UsuarioServiceTests
     private readonly Mock<IUsuarioRepository> _usuarioRepoMock;
     private readonly Mock<IConfiguration> _configMock;
     private readonly Mock<ILogger<UsuarioService>> _logger;
+    private readonly Mock<IUsuarioContextService> _usuarioContext;
     private readonly UsuarioService _usuarioService;
 
     public UsuarioServiceTests()
@@ -22,7 +24,8 @@ public class UsuarioServiceTests
         _usuarioRepoMock = new Mock<IUsuarioRepository>();
         _configMock = new Mock<IConfiguration>();
         _logger = new Mock<ILogger<UsuarioService>>();
-        _usuarioService = new UsuarioService(_usuarioRepoMock.Object, _configMock.Object, _logger.Object);
+        _usuarioContext = new Mock<IUsuarioContextService>();
+        _usuarioService = new UsuarioService(_usuarioRepoMock.Object, _configMock.Object, _logger.Object, _usuarioContext.Object);
     }
 
     [Fact]
@@ -174,27 +177,5 @@ public class UsuarioServiceTests
         var resultado = await _usuarioService.ListarTodosAsync();
 
         Assert.Equal(2, resultado.Count());
-    }
-
-    [Fact]
-    public async Task PromoverParaAdminAsync_DevePromover_SeUsuarioExistir()
-    {
-        var usuario = new Usuario("João", "joao@email.com", "hash");
-        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(usuario);
-
-        var resultado = await _usuarioService.PromoverParaAdminAsync(Guid.NewGuid());
-
-        Assert.True(resultado.Sucesso);
-        _usuarioRepoMock.Verify(r => r.SalvarAsync(), Times.Once);
-    }
-
-    [Fact]
-    public async Task PromoverParaAdminAsync_DeveRetornarFalse_SeNaoEncontrado()
-    {
-        _usuarioRepoMock.Setup(r => r.ObterPorIdAsync(It.IsAny<Guid>())).ReturnsAsync((Usuario?)null);
-
-        var resultado = await _usuarioService.PromoverParaAdminAsync(Guid.NewGuid());
-
-        Assert.False(resultado.Sucesso);
     }
 }
