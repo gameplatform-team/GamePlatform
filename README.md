@@ -1,4 +1,4 @@
-## Instalação - 
+## Instalação 
 
 Use o [git](https://git-scm.com/) para clonar este repositório
 
