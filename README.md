@@ -1,78 +1,72 @@
-## Instalação 
+# GamePlatform
 
-Use o [git](https://git-scm.com/) para clonar este repositório
+## 📋 Sobre o Projeto
+GamePlatform é uma aplicação .NET 8.0 desenvolvida seguindo os princípios da Clean Architecture, oferecendo uma plataforma robusta e escalável para gerenciamento de jogos.
 
-```shell
-git clone git@gitlab.sotran.com.br:sotran/api-tmov.git # SSH
+## 🏗️ Arquitetura
 
-git clone http://gitlab.sotran.com.br/sotran/api-tmov.git # HTTP
-```
+O projeto está estruturado em camadas:
 
-Download e instalação do Visual Studio 2017 ou 2019.
+- **GamePlatform.Api**: Camada de apresentação que expõe as APIs RESTful
+- **GamePlatform.Application**: Contém a lógica de aplicação e casos de uso
+- **GamePlatform.Domain**: Define as entidades de domínio e regras de negócio
+- **GamePlatform.Infrastructure**: Implementa o acesso a dados e serviços externos
+- **GamePlatform.Tests**: Projeto de testes unitários
 
-## Executar projeto 
+## 🚀 Como Executar
 
-- Selecionar o enviroment que deseja executar e o projeto irá executar com base no appsettings.[enviroment].json selecionado.
+### Pré-requisitos
+- .NET SDK 8.0 ou superior
+- Uma IDE compatível (recomendado: Visual Studio, JetBrains Rider ou VS Code)
 
-- Importante: Para executar no enviroment DEVELOPMENT, cada Squad deve descomentar as linhas de conexões com banco de dados e apontamentos do seu time, no arquivo `appsettings.development.json`
+### Passos para Execução
 
-- Executar projeto com `Ctrl + F5` ou em executar no Visual Studio.
-
-## Build do projeto
-
-| Enviroment  | Descrição                                                      |
-| ----------- | -------------------------------------------------------------- |
-| development | Build para ambiente de desenvolvimento e apontamento local     |
-| hml         | Build para ambiente de homologação e apontamento de homolog    |
-| production  | Build para ambiente de desenvolvimento e apontamento produtivo |
-
-## Documentação da API
-
-Acesse a url `[SERVIDOR]/swagger/index.html`
-
-## Build
-
-O build da aplicação para execução em homologação ou produção é realizado pelo [Docker](https://www.docker.com/), fazendo a montagem da imagem e criação do container no servidor.
-
-### Build docker compose
+1. Clone o repositório:
 
 ```bash
-docker-compose -f docker-compose.yml up --build -d
+git clone https://github.com/rafaelozelin/GamePlatform.git
 ```
 
-### Build individual
-
+2. Navegue até a pasta do projeto:
 ```bash
-# CRIAÇÃO DA IMAGEM
-docker build -t "api-tmov:1.0.0" .
+cd GamePlatform
+``` 
 
-# REMOVER IMAGENS TEMPORÁRIAS QUE FORAM UTILIZADAS PARA O BUILD
-docker image prune --filter label=stage=api-tmov-intermediate
+3. Restaure as dependências:
+```bash
+dotnet restore
+``` 
 
-# EXECUTAR APLICAÇÃO EM CONTAINER
-## ASPNETCORE_ENVIRONMENT pode variar de acordo com o ambiente que está sendo executado
-### production, hml, development ou test
-docker run -itd -p 95:80 -v /var/log/api-tmov:/var/log/api-tmov -e ASPNETCORE_ENVIRONMENT=production --hostname=api-tmov --rm --name api-tmov api-tmov:1.0.0
+4. Execute a aplicação:
+```bash
+cd GamePlatform.Api dotnet run
+``` 
 
-# TESTAR SE O CONTAINER RESPONDE
-curl -L http://0:95
+A API estará disponível em `http://localhost:5232`.
 
-# VISUALIZAR LOG DO CONTAINER
-sudo docker container ls # (pegar o id do container)
-sudo docker logs -f -t # + (id do container)
+Você pode executar as requisições através do Swagger: `http://localhost:5232/swagger/index.html`.
 
-# LOG DA APLICAÇÃO
-sudo docker exec -i -t (id do container) /bin/bash
-tail -f 'c:\temp\nlog-all-2020-05-07.log'
+## 🧪 Executando os Testes
 
-# PARA APLICAÇÃO DO CONTAINER
-sudo docker container ls # (pegar o id do container)
-sudo docker container stop # + (id do container)
+Para executar os testes unitários:
+```bash
+dotnet test
 ```
 
+## 🛠️ Tecnologias Utilizadas
 
-----
+- ASP.NET Core 8.0
+- C# 12.0
+- Clean Architecture
+- Testes Unitários
 
-### Entity framework core
+## 📦 Estrutura da Solução
 
-https://www.entityframeworktutorial.net/efcore/entity-framework-core.aspx
+```plaintext
+GamePlatform/
+├── GamePlatform.Api/            # API endpoints e configurações
+├── GamePlatform.Application/    # Casos de uso e lógica de aplicação
+├── GamePlatform.Domain/         # Entidades e regras de negócio
+├── GamePlatform.Infrastructure/ # Implementações de repositórios e serviços
+└── GamePlatform.Tests/          # Testes unitários
+```
