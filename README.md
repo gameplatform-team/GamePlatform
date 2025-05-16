@@ -39,7 +39,10 @@ dotnet restore
 
 4. Execute a aplicação:
 ```bash
-cd GamePlatform.Api dotnet run
+cd GamePlatform.Api
+``` 
+```bash
+dotnet run
 ``` 
 
 A API estará disponível em `http://localhost:5232`.
