@@ -22,7 +22,7 @@ public class JogoService : IJogoService
         if (await _jogoRepository.ExisteTituloAsync(jogoDto.Titulo))
             return new BaseResponseDto(false, "Jogo já cadastrado");
 
-        var jogo = new Jogo(jogoDto.Titulo, jogoDto.Preco);
+        var jogo = new Jogo(jogoDto.Titulo, jogoDto.Preco, jogoDto.Descricao);
         await _jogoRepository.AdicionarAsync(jogo);
         
         return new BaseResponseDto(true, "Jogo cadastrado com sucesso");
@@ -39,7 +39,8 @@ public class JogoService : IJogoService
         {
             Id = jogo.Id,
             Titulo = jogo.Titulo,
-            Preco = jogo.Preco
+            Preco = jogo.Preco,
+            Descricao = jogo.Descricao
         };
         
         return new DataResponseDto<JogoDto>(true, string.Empty, jogoDto);
@@ -70,7 +71,8 @@ public class JogoService : IJogoService
             {
                 Id = jogo.Id,
                 Titulo = jogo.Titulo,
-                Preco = jogo.Preco
+                Preco = jogo.Preco,
+                Descricao = jogo.Descricao
             }),
             NumeroPagina = numeroPagina,
             TamanhoPagina = tamanhoPagina,
@@ -93,7 +95,7 @@ public class JogoService : IJogoService
         if (jogosComMesmoTitulo.Any())
             return new BaseResponseDto(false, "Já existe outro jogo com este título");
 
-        jogoExistente.Atualizar(jogoDto.Titulo, jogoDto.Preco);
+        jogoExistente.Atualizar(jogoDto.Titulo, jogoDto.Preco, jogoDto.Descricao);
     
         await _jogoRepository.AtualizarAsync(jogoExistente);
     

@@ -61,12 +61,13 @@ public class JogoServiceTests
     public async Task ObterPorIdAsync_DeveRetornarJogo_QuandoExistir()
     {
         // Arrange
-        var jogo = new Jogo("Jogo Existente", 99.99m);
+        var jogo = new Jogo("Jogo Existente", 99.99m, "Descricao do jogo.");
         var jogoDto = new JogoDto
         {
             Id = jogo.Id,
             Titulo = jogo.Titulo,
-            Preco = jogo.Preco
+            Preco = jogo.Preco,
+            Descricao = jogo.Descricao
         };
         
         _jogoRepoMock.Setup(x => x.ObterPorIdAsync(It.IsAny<Guid>())).ReturnsAsync(jogo);
@@ -101,8 +102,8 @@ public class JogoServiceTests
         // Arrange
         var jogos = new List<Jogo>
         {
-            new("Jogo 1", 99.99m),
-            new("Jogo 2", 149.99m)
+            new("Jogo 1", 99.99m, "Descricao do Jogo 1."),
+            new("Jogo 2", 149.99m, "Descricao do Jogo 2.")
         };
 
         var jogosDtos = jogos.Select(j =>
@@ -110,7 +111,8 @@ public class JogoServiceTests
             {
                 Id = j.Id,
                 Titulo = j.Titulo,
-                Preco = j.Preco
+                Preco = j.Preco,
+                Descricao = j.Descricao
             });
         
         _jogoRepoMock.Setup(x => x.ObterTodosPaginadoAsync(
@@ -154,7 +156,13 @@ public class JogoServiceTests
     public async Task AtualizarAsync_DeveRetornarErro_QuandoJogoNaoEncontrado()
     {
         // Arrange
-        var jogoDto = new AtualizarJogoDto { Id = Guid.NewGuid() , Titulo = "Novo Nome Do Jogo", Preco = 129.99m };
+        var jogoDto = new AtualizarJogoDto
+        {
+            Id = Guid.NewGuid(),
+            Titulo = "Novo Nome Do Jogo",
+            Preco = 129.99m,
+            Descricao = "Uma nova descricao"
+        };
 
         _jogoRepoMock
             .Setup(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogoDto.Id)))
@@ -175,8 +183,14 @@ public class JogoServiceTests
     public async Task AtualizarAsync_DeveRetornarErro_QuandoOutroJogoComMesmoNomeExiste()
     {
         // Arrange
-        var jogoDto = new AtualizarJogoDto { Id = Guid.NewGuid() , Titulo = "Novo Nome Do Jogo", Preco = 129.99m };
-        var jogoExistente = new Jogo("Nome Do Jogo", 159.99m);
+        var jogoDto = new AtualizarJogoDto
+        {
+            Id = Guid.NewGuid(),
+            Titulo = "Novo Nome Do Jogo",
+            Preco = 129.99m,
+            Descricao = "Uma nova descricao"
+        };
+        var jogoExistente = new Jogo("Nome Do Jogo", 159.99m, "Descricao do jogo.");
 
         _jogoRepoMock
             .Setup(x => x.ObterPorIdAsync(It.Is<Guid>(
@@ -185,7 +199,7 @@ public class JogoServiceTests
         
         _jogoRepoMock
             .Setup(x => x.ObterTodosAsync(It.IsAny<Expression<Func<Jogo, bool>>>()))
-            .ReturnsAsync([ new Jogo("Novo Nome Do Jogo", 99.99m)]);
+            .ReturnsAsync([ new Jogo("Novo Nome Do Jogo", 99.99m, "Outra descricao.")]);
 
         // Act
         var resultado = await _jogoService.AtualizarAsync(jogoDto);
@@ -202,8 +216,14 @@ public class JogoServiceTests
     public async Task AtualizarAsync_DeveRetornarSucesso_QuandoOutroJogoComMesmoNomeNaoExiste()
     {
         // Arrange
-        var jogoDto = new AtualizarJogoDto { Id = Guid.NewGuid() , Titulo = "Novo Nome Do Jogo", Preco = 129.99m };
-        var jogoExistente = new Jogo("Nome Do Jogo", 159.99m);
+        var jogoDto = new AtualizarJogoDto
+        {
+            Id = Guid.NewGuid(),
+            Titulo = "Novo Nome Do Jogo",
+            Preco = 129.99m,
+            Descricao = "Uma nova descricao"
+        };
+        var jogoExistente = new Jogo("Nome Do Jogo", 159.99m, "Descricao do jogo.");
 
         _jogoRepoMock
             .Setup(x => x.ObterPorIdAsync(It.Is<Guid>(
@@ -254,7 +274,7 @@ public class JogoServiceTests
     public async Task RemoverAsync_DeveRetornarSucesso_QuandoJogoRemovido()
     {
         // Arrange
-        var jogo = new Jogo("Jogo Existente", 99.99m);
+        var jogo = new Jogo("Jogo Existente", 99.99m, "Descricao do jogo.");
         
         _jogoRepoMock
             .Setup(x => x.ObterPorIdAsync(It.Is<Guid>(g => g == jogo.Id)))

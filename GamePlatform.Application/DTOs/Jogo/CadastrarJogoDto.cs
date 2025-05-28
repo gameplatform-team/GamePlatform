@@ -11,4 +11,8 @@ public class CadastrarJogoDto
     [Required]
     [Range(0.01, 100000.00)]
     public decimal Preco { get; init; }
+    
+    [Required]
+    [MinLength(1)]
+    public string Descricao { get; init; }
 }

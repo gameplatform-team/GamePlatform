@@ -19,7 +19,10 @@ public class JogoConfiguration : IEntityTypeConfiguration<Jogo>
 
         builder.Property(j => j.Preco)
             .IsRequired()
-            .HasColumnType("decimal(18,2)");  
+            .HasColumnType("decimal(18,2)");
+        
+        builder.Property(j => j.Descricao)
+            .IsRequired();
 
         builder.HasIndex(j => j.Titulo).IsUnique();
     }
