@@ -41,7 +41,7 @@ jobs:
       run: dotnet build GamePlatform.sln --configuration Release --no-restore
 
     - name: Testes
-      run: dotnet test GamePlatform.Tests/GamePlatform.Tests.csproj --no-build --verbosity normal
+      run: dotnet test GamePlatform.Tests/GamePlatform.Tests.csproj --verbosity normal
 
     - name: Build Docker
       run: docker-compose -f docker-compose.yml build
