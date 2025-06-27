@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  AZURE_WEBAPP_NAME: gameplatform-grupo120
+  DOCKER_IMAGE_NAME: brunolazzara/gameplatform-fiap-grupo120
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -29,6 +33,7 @@ jobs:
       run: dotnet test GamePlatform.Tests/GamePlatform.Tests.csproj --verbosity normal
 
   build-and-deploy:
+    needs: build-and-test
     runs-on: ubuntu-latest
 
     steps:
