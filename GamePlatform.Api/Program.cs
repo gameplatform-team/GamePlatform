@@ -52,11 +52,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Middleware do Swagger
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // Middlewares HTTP
 app.UseHttpsRedirection();
