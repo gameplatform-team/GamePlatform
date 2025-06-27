@@ -1,8 +1,6 @@
 using GamePlatform.Api.Configuration;
 using GamePlatform.Api.Middlewares;
 using GamePlatform.Application.Configuration;
-using GamePlatform.Application.Interfaces.Services;
-using GamePlatform.Application.Services;
 using GamePlatform.Infrastructure.Contexts;
 using GamePlatform.Infrastructure.Seed;
 using Serilog;
