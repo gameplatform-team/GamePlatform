@@ -1,4 +1,4 @@
-name: CI - Build, Test e Deploy da API
+name: CI/CD - Build, Test e Deploy da API
 
 on:
   push:
