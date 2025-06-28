@@ -1,4 +1,4 @@
-# GamePlatform
+# GamePlatform v2
 
 ## 📋 Sobre o Projeto
 GamePlatform é uma aplicação .NET 8.0 desenvolvida seguindo os princípios da Clean Architecture, oferecendo uma plataforma robusta e escalável para gerenciamento de jogos.
