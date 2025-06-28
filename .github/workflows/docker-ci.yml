@@ -51,7 +51,7 @@ jobs:
         uses: docker/build-push-action@v6.18.0
         with:
           context: .
-          tags: $DOCKER_IMAGE_NAME:${{ github.sha }}
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
           push: true
 
       - name: Login no Azure
