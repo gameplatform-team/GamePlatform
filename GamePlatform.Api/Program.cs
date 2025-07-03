@@ -4,14 +4,22 @@ using GamePlatform.Application.Configuration;
 using GamePlatform.Infrastructure.Contexts;
 using GamePlatform.Infrastructure.Seed;
 using Serilog;
+using Serilog.Sinks.Datadog.Logs;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Serilog
+// Serilog + Datadog
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
     .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.DatadogLogs(
+        service: Environment.GetEnvironmentVariable("DD_SERVICE") ?? "gameplatform-api",
+        apiKey: Environment.GetEnvironmentVariable("DATADOG_API_KEY"),
+        configuration: new DatadogConfiguration
+        {
+            Url = "https://http-intake.logs.datadoghq.com" // altere se usar .eu ou outro site
+        })
     .CreateLogger();
 
 builder.Host.UseSerilog();

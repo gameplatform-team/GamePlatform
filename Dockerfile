@@ -20,6 +20,15 @@ RUN dotnet publish -a $TARGETARCH "GamePlatform.Api.csproj" -c Release -o /app/p
 # Etapa 2: imagem final
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+
+# Variáveis para Datadog APM + Logs
+ENV DD_SERVICE=gameplatform-api
+ENV DD_ENV=production
+ENV DD_VERSION=1.0.0
+ENV DD_TRACE_ENABLED=true
+ENV DD_LOGS_INJECTION=true
+ENV ASPNETCORE_URLS=http://+:8080
+
 COPY --from=build /app/publish .
 
 EXPOSE 8080
