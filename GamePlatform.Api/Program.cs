@@ -3,6 +3,7 @@ using GamePlatform.Api.Middlewares;
 using GamePlatform.Application.Configuration;
 using GamePlatform.Infrastructure.Contexts;
 using GamePlatform.Infrastructure.Seed;
+using Prometheus;
 using Serilog;
 using System.Text.Json.Serialization;
 
@@ -24,7 +25,7 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 // Adicionar configuracoes do banco de dados e servicos da infraestrutura
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
-// Adicionar servicos da camada de aplica��o
+// Adicionar servicos da camada de aplicação
 builder.Services.AddApplicationServices();
 
 // Controllers e Swagger
@@ -42,7 +43,7 @@ var app = builder.Build();
 // Middleware de log
 app.UseHttpLogging();
 
-// Chamar o Seed
+// Seed do banco
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -51,8 +52,7 @@ using (var scope = app.Services.CreateScope())
     await DbInitializer.SeedAsync(context);
 }
 
-// Middleware do Swagger
-
+// Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -62,6 +62,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.MapControllers();
+// PROMETHEUS 
+app.UseRouting();
+app.UseHttpMetrics();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapMetrics(); 
+});
 
 app.Run();

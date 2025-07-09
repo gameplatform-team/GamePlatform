@@ -1,0 +1,61 @@
+{
+  "id": null,
+  "title": "API C# (.NET) - Métricas Prometheus",
+  "tags": ["dotnet", "api", "prometheus"],
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total de Requisições",
+      "id": 1,
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum(http_requests_received_total)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Tempo de Requisição (latência)",
+      "id": 2,
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(http_request_duration_seconds_sum[1m]) / rate(http_request_duration_seconds_count[1m])",
+          "refId": "A",
+          "legendFormat": "latência média"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Requisições por Código de Status",
+      "id": 3,
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (code) (rate(http_requests_received_total[1m]))",
+          "refId": "A",
+          "legendFormat": "Código {{code}}"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Quantidade de Requisições por Método",
+      "id": 4,
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (method) (rate(http_requests_received_total[1m]))",
+          "refId": "A",
+          "legendFormat": "Método {{method}}"
+        }
+      ]
+    }
+  ]
+}
