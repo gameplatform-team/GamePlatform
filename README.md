@@ -73,3 +73,10 @@ GamePlatform/
 ├── GamePlatform.Infrastructure/ # Implementações de repositórios e serviços
 └── GamePlatform.Tests/          # Testes unitários
 ```
+
+## 🔄 CI/CD
+
+O projeto utiliza GitHub Actions para automação de CI/CD, incluindo:
+- Build e testes automatizados
+- Build e push de imagem Docker
+- Deploy automático para Azure Web App
