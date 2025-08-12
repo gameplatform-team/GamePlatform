@@ -3,8 +3,10 @@ using GamePlatform.Api.Middlewares;
 using GamePlatform.Application.Configuration;
 using GamePlatform.Infrastructure.Contexts;
 using GamePlatform.Infrastructure.Seed;
+using HealthChecks.UI.Client;
 using Serilog;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,9 @@ builder.Services.AddCustomHttpLogging();
 
 // JWT
 builder.Services.AddJwtAuthentication(builder.Configuration);
+
+// Health check
+builder.AddCustomHealthCheck();
 
 // Adicionar configuracoes do banco de dados e servicos da infraestrutura
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -52,9 +57,18 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Middleware do Swagger
-
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// Health check
+app.UseHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+}).UseHealthChecksUI(options =>
+{
+    options.UIPath = "/health-ui";
+});
 
 // Middlewares HTTP
 app.UseHttpsRedirection();
