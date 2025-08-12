@@ -19,7 +19,7 @@ public static class HealthCheckConfiguration
             settings.SetEvaluationTimeInSeconds(10);
             settings.MaximumHistoryEntriesPerEndpoint(100);
             settings.SetApiMaxActiveRequests(1);
-            settings.AddHealthCheckEndpoint("API Health", "/health");
+            settings.AddHealthCheckEndpoint("API Health", "http://localhost:8080/health");
         }).AddInMemoryStorage();
     }
 }
